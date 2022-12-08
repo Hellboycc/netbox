@@ -6,9 +6,7 @@ from ..version import __version__
 
 
 @click.group()
-@click.version_option(
-    version="v" + __version__, help="Print version information and quit"
-)
+@click.version_option(version=__version__, help="Print version information and quit")
 def cli():
     """A simple and flexible CLI tool for network testing"""
     pass
@@ -17,7 +15,7 @@ def cli():
 @cli.command()
 def version():
     """Show the CLI tool version information"""
-    click.echo(f"Current version is v{__version__}")
+    click.echo(f"Current version is {__version__}")
 
 
 @cli.group()
