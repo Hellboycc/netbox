@@ -50,6 +50,11 @@ A step by step series of examples that tell you how to get the CLI tool running.
 	```
 	
 ### Installing from pypi
+If you don't want to use git repository, you could choose to download from [pypi.org](https://pypi.org/project/netbox/0.0.1/) and install to use.
+
+```shell
+pip3 install netbox
+```
 	
 ### Running CLI on your terminal window
 1. Example for display CLI tool information
@@ -104,7 +109,22 @@ A step by step series of examples that tell you how to get the CLI tool running.
 The project contains complete unit tests, if you want to know the unit test results before using the tool, you can get the detailed test results by executing the unit tests.
 ### How to run unit test
 1. Install all dependency of develop
+
+	```shell
+	# For MacOS
+	cd netbox
+	python -m venv .venv
+	cd .venv/bin
+	source activate
+	# In this path /Users/..../netbox
+	pip3 install -r requirements-dev.txt
+	```
 2. Running unit test with tox command
+
+	```shell
+	# In this path /Users/..../netbox
+	tox
+	```
 
 # FAQ & Issues
 - If you encounter any problems in using it, please keep in touch with me and I will reply as soon as possible, you can access to the link as below

@@ -34,7 +34,6 @@ setup(
         "Development Status :: 3 - Alpha",
         # the audience this library is intended for
         "Intended Audience :: Developers",
-        "Intended Audience :: Software Testers",
         "License :: OSI Approved :: MIT License",
         "Natural Language :: English",
         # Any operating system can use it
@@ -43,8 +42,7 @@ setup(
         "Programming Language :: Python",
         "Programming Language :: Python :: 3.10",
         # Library covers
-        "Topic :: Network",
-        "Topic :: Software Testing",
+        "Topic :: Software Development :: Libraries",
     ],
     entry_points={"console_scripts": ["netbox-cli = netbox.scripts.command:cli"]},
 )
