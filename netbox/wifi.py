@@ -1,11 +1,13 @@
+import re
 import subprocess
 import typing as t
 
+from . import logger
 from .constant import WiFiState
 from .exception import CommandException
 
 
-class BaseAdapter(object):
+class WifiAdapter(object):
     """A class that contains generic properties and methods."""
 
     def __init__(self) -> None:
@@ -26,17 +28,23 @@ class BaseAdapter(object):
         """
         process = subprocess.run(command, shell=True, capture_output=True, text=True)
         if process.returncode != 0:
-            raise CommandException(message="Command execute failed.")
+            raise CommandException(message=f"Command: '{command}' executed failed.")
         return process.stdout
 
 
-class MacAdapter(BaseAdapter):
+class MacAdapter(WifiAdapter):
     """Adapter of Wi-Fi operation under MacOS."""
 
     AIRPORT_PATH = "/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport"
 
     def __init__(self) -> None:
         pass
+
+    def get_current_network(self) -> t.Dict[str, str]:
+        return self._get_current_wifi_info()
+
+    def get_networks(self) -> t.List[t.Dict[str, str]]:
+        return self._get_scan_results()
 
     def _get_current_wifi_info(self) -> t.Dict[str, str]:
         """Obtain current connected wifi information.
@@ -49,10 +57,10 @@ class MacAdapter(BaseAdapter):
         info = {}
         for line in output.split("\n"):
             if ":" in line:
-                key, val = line.split(":")
-                key = key.strip()
-                val = val.strip()
-                info.update({key: val})
+                (k, v) = line.split(":")
+                k = k.strip()
+                v = v.strip()
+                info.update({k: v})
         return info
 
     @property
@@ -66,7 +74,7 @@ class MacAdapter(BaseAdapter):
         output = self.execute_command(command=command)
         return output.strip()
 
-    def get_scan_results(self):
+    def _get_scan_results(self) -> t.List[t.Dict[str, str]]:
         """Obtain surrounding wifi network information.
 
         Returns:
@@ -75,8 +83,24 @@ class MacAdapter(BaseAdapter):
         command = f"{self.AIRPORT_PATH} -s"
         output = self.execute_command(command=command)
         # clean output data
-        results = list(map(lambda x: x.strip().split(), output.split("\n")))
-        return results
+        _rets = list()
+        rets = list()
+        for line in output.split("\n")[1:]:
+            if line != "":
+                line = re.sub(r"\s{2,}", "|", line.strip().replace("--", ""))
+                _rets.append(line)
+        for line in _rets:
+            _line = line.split("|")
+            rets.append(
+                {
+                    "ssid": _line[0],
+                    "rssi": _line[1],
+                    "channel": _line[2],
+                    "HT": _line[3],
+                    "security": _line[4],
+                }
+            )
+        return rets
 
     def get_all_ssid(self):
         """Obtain a collection of available ssid.
@@ -84,11 +108,11 @@ class MacAdapter(BaseAdapter):
         Returns:
             Collection of ssid. For example: ['test01', 'ChinaNet-test001', 'TP-Link1111']
         """
-        results = self.get_scan_results()[1:]
+        results = self._get_scan_results()
         all_ssid = list()
         for item in results:
-            if item != []:
-                all_ssid.append(item[0])
+            ssid = item.get("ssid", "")
+            all_ssid.append(ssid)
         return all_ssid
 
     def is_on_or_off(self) -> WiFiState:
@@ -109,7 +133,7 @@ class MacAdapter(BaseAdapter):
         Returns:
             String value of ssid.
         """
-        return self._get_current_wifi_info().get("SSID")
+        return self._get_current_wifi_info().get("SSID", "")
 
     def get_current_rssi(self) -> t.Optional[str]:
         """Obtain rssi of current connected ssid.
@@ -131,7 +155,7 @@ class MacAdapter(BaseAdapter):
         """
         command = f"networksetup -setairportnetwork {self.interface} {ssid} {password}"
         self.execute_command(command=command)
-        if self.get_state() != "running" or self.get_current_ssid() != ssid:
+        if self._get_state() != "running" or self.get_current_ssid() != ssid:
             return WiFiState.CONNECTED_FAILED
         return WiFiState.CONNECTED
 
@@ -144,7 +168,7 @@ class MacAdapter(BaseAdapter):
         # command = f"sudo {self.AIRPORT_PATH} -z"
         return WiFiState.DISCONNECTED if self.turn_off() else None
 
-    def get_state(self) -> t.Optional[str]:
+    def _get_state(self) -> t.Optional[str]:
         return self._get_current_wifi_info().get("state")
 
     def turn_on(self) -> bool:
@@ -155,13 +179,11 @@ class MacAdapter(BaseAdapter):
         """
         command = f"networksetup -setairportpower {self.interface} on"
         try:
-            print(f"Wifi interface {self.interface} will be on...")
+            logger.debug(msg=f"Wlan interface {self.interface} will be on.")
             self.execute_command(command=command)
-            # if self.is_on_or_off() == WiFiState.ON:
-            #     return True
         except CommandException as e:
             return False
-        return self.is_on_or_off == WiFiState.ON
+        return self.is_on_or_off() == WiFiState.ON
 
     def turn_off(self) -> bool:
         """Turn off wifi interface.
@@ -171,21 +193,21 @@ class MacAdapter(BaseAdapter):
         """
         command = f"networksetup -setairportpower {self.interface} off"
         try:
-            print(f"Wifi interface {self.interface} will be off...")
+            logger.debug(msg=f"Wlan interface {self.interface} will be off.")
             self.execute_command(command=command)
         except CommandException as e:
             return False
-        return self.is_on_or_off == WiFiState.OFF
+        return self.is_on_or_off() == WiFiState.OFF
 
 
-class WindowsAdapter(BaseAdapter):
+class WindowsAdapter(WifiAdapter):
     """Adapter of Wi-Fi operation under Windows."""
 
     def __init__(self) -> None:
         super().__init__()
 
 
-class LinuxAdapter(BaseAdapter):
+class LinuxAdapter(WifiAdapter):
     """Adapter of Wi-Fi operation under Linux."""
 
     def __init__(self) -> None:
