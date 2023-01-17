@@ -17,37 +17,36 @@ This command line tool integrates some common network operations, such as wirele
 A step by step series of examples that tell you how to get the CLI tool running.
 
 ### Installing via git repository
-1. Clone project with git command
+Clone project with git command
 
-	```shell
-	git clone https://github.com/Hellboycc/netbox.git
-	
-	```
-2. Create a virtual environment in the project root directory
+```shell
+git clone https://github.com/Hellboycc/netbox.git
+```
+Create a virtual environment in the project root directory
 
-	```shell
-	cd netbox
-	python -m venv .venv
-	```
-3. Activate current virtual environment
+```shell
+cd netbox
+python -m venv .venv
+```
+Activate current virtual environment
 
-	```shell
-	# For MacOS
-	cd .venv/bin
-	source activate
-	```
-4. Install all dependency with pip3 command
+```shell
+# For MacOS
+cd .venv/bin
+source activate
+```
+Install all dependency with pip3 command
 
-	```shell
-	# In this path /Users/..../netbox
-	pip3 install -r requirements.txt
-	```
-5. Install project on your local machine
+```shell
+# In this path /Users/..../netbox
+pip3 install -r requirements.txt
+```
+Install project on your local machine
 
-	```shell
-	# In this path /Users/..../netbox 
-	pip3 install -e .
-	```
+```shell
+# In this path /Users/..../netbox 
+pip3 install -e .
+```
 	
 ### Installing from pypi
 If you don't want to use git repository, you could choose to download from [pypi.org](https://pypi.org/project/netbox/0.0.1/) and install to use.
@@ -57,74 +56,74 @@ pip3 install netbox
 ```
 	
 ### Running CLI on your terminal window
-1. Example for display CLI tool information
+Example for display CLI tool information
 	
-	```shell
-	netbox-cli                                                                                                                                                                    
-	Usage: netbox-cli [OPTIONS] COMMAND [ARGS]...
+```
+netbox-cli                                                                                                                                                                    
+Usage: netbox-cli [OPTIONS] COMMAND [ARGS]...
 	
-	  A simple and flexible CLI tool for network testing
+  A simple and flexible CLI tool for network testing
 	
-	Options:
-	  --version  Print version information and quit
-	  --help     Show this message and exit.
+Options:
+  --version  Print version information and quit
+  --help     Show this message and exit.
 	
-	Commands:
-	  version  Show the CLI tool version information
-	  wlan     Manage wifi network
-	```
-2. Example for child commands
+Commands:
+  version  Show the CLI tool version information
+  wlan     Manage wifi network
+```
+Example for child commands
 	
-	```shell
-	netbox-cli wlan                                                                                                                                                              
-	Usage: netbox-cli wlan [OPTIONS] COMMAND [ARGS]...
+```shell
+netbox-cli wlan                                                                                                                                                              
+Usage: netbox-cli wlan [OPTIONS] COMMAND [ARGS]...
 	
-	  Manage wifi network
+  Manage wifi network
 	
-	Options:
-	  --help  Show this message and exit.
+Options:
+  --help  Show this message and exit.
 	
-	Commands:
-	  connect     Connect a wifi network
-	  current     Current wifi network information
-	  disconnect  Disconnect current wifi network
-	  scan        Scan surround wifi network
-	```
-3. Example for dispaly current version
+Commands:
+  connect     Connect a wifi network
+  current     Current wifi network information
+  disconnect  Disconnect current wifi network
+  scan        Scan surround wifi network
+```
+Example for dispaly current version
 
-	```shell
-	netbox-cli version   
-	                                                                                                                                                         
-	Current version is v0.0.1
-	```
-4. Example for scan a specified wifi network exists or not
+```shell
+netbox-cli version   
+                                                                                                                                                         
+Current version is v0.0.1
+```
+Example for scan a specified wifi network exists or not
 
-	```shell
-	netbox-cli wlan scan --ssid Hellboycc 
-	                                                                                                                                        
-	Current ssid Hellboycc is not found.
-	```
+```shell
+netbox-cli wlan scan --ssid Hellboycc 
+                                                                                                                                        
+Current ssid Hellboycc is not found.
+```
 	
 # Testing
 The project contains complete unit tests, if you want to know the unit test results before using the tool, you can get the detailed test results by executing the unit tests.
 ### How to run unit test
-1. Install all dependency of develop
+Install all dependency of develop
 
-	```shell
-	# For MacOS
-	cd netbox
-	python -m venv .venv
-	cd .venv/bin
-	source activate
-	# In this path /Users/..../netbox
-	pip3 install -r requirements-dev.txt
-	```
-2. Running unit test with tox command
+```shell
+# For MacOS
+cd netbox
+python -m venv .venv
+cd .venv/bin
+source activate
+# In this path /Users/..../netbox
+pip3 install -r requirements-dev.txt
+```
+Running unit test with tox command
 
-	```shell
-	# In this path /Users/..../netbox
-	tox
-	```
+```shell
+# In this path /Users/..../netbox
+tox
+```
 
 # FAQ & Issues
 - If you encounter any problems in using it, please keep in touch with me and I will reply as soon as possible, you can access to the link as below
