@@ -1,4 +1,8 @@
+import logging
+
 import click  # type:ignore
+
+from netbox import logger
 
 from ..constant import WiFiState
 from ..core import Netbox
@@ -7,14 +11,18 @@ from ..version import __version__
 
 @click.group()
 @click.version_option(version=__version__, help="Print version information and quit")
-def cli():
+@click.option("-D", "--debug", is_flag=True, help="Enable debug mode")
+def cli(debug):
     """A simple and flexible CLI tool for network testing"""
-    pass
+    if debug:
+        for handler in logger.handlers:
+            if isinstance(handler, logging.StreamHandler):
+                handler.setLevel(logging.DEBUG)
 
 
 @cli.command()
 def version():
-    """Show the CLI tool version information"""
+    """Show the CLI tool current version"""
     click.echo(f"Current version is {__version__}")
 
 
@@ -36,7 +44,7 @@ def scan(netbox: Netbox, ssid: str) -> None:
     if ssid in netbox.get_all_ssid():
         click.echo(f"Current ssid {ssid} exists.")
     else:
-        click.echo(f"Current ssid {ssid} is not found.")
+        click.echo(f"Current ssid {ssid} not found.")
 
 
 @wlan.command(help="Current wifi network information")
@@ -55,9 +63,9 @@ def current(netbox):
 @click.pass_obj
 def connect(netbox, ssid, password, retry):
     if retry is None:
-        netbox.connect(ssid=ssid, password=password)
+        click.echo(netbox.connect(ssid=ssid, password=password))
     else:
-        netbox.connect(ssid=ssid, password=password, retry=retry)
+        click.echo(netbox.connect(ssid=ssid, password=password, retry=retry))
 
 
 @wlan.command(help="Disconnect current wifi network")
@@ -66,4 +74,4 @@ def disconnect(netbox):
     current_ssid = netbox.ssid
     if netbox.disconnect() == WiFiState.DISCONNECTED:
         netbox.turn_on_wifi()
-        print(f"Disconnect from {current_ssid} wifi network")
+        click.echo(f"Disconnect from {current_ssid} wifi network")

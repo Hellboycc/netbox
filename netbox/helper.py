@@ -1,7 +1,7 @@
 import platform
 import typing as t
 
-from .wifi import BaseAdapter, LinuxAdapter, MacAdapter, WindowsAdapter
+from .wifi import LinuxAdapter, MacAdapter, WifiAdapter, WindowsAdapter
 
 
 def get_current_os_info() -> str:
@@ -13,13 +13,13 @@ def get_current_os_info() -> str:
     return platform.system()
 
 
-def create_adapter(name: str) -> t.Optional[BaseAdapter]:
+def create_adapter(name: str) -> t.Optional[WifiAdapter]:
     """Create and adapter based on operating system information.
 
     Returns:
         An object of adapter.
     """
-    adapter: t.Optional[BaseAdapter] = None
+    adapter: t.Optional[WifiAdapter] = None
     if name == "Windows":
         adapter = WindowsAdapter()
     elif name == "Linux":
